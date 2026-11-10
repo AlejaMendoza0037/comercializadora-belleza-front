@@ -1,0 +1,107 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap");
+
+:root {
+  --teal-profundo: #0f3d3e;
+  --teal: #0e7c86;
+  --rosa: #c8577a;
+  --fondo: #f5f3f4;
+  --superficie: #ffffff;
+  --tinta: #1d2b2c;
+  --borde: #e4dfe1;
+  --bs-primary: #0e7c86;
+  --bs-primary-rgb: 14, 124, 134;
+  --bs-body-font-family: "DM Sans", system-ui, sans-serif;
+}
+
+body {
+  background: var(--fondo);
+  color: var(--tinta);
+  font-family: var(--bs-body-font-family);
+}
+
+h1, h2 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 700;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--teal);
+  --bs-btn-border-color: var(--teal);
+  --bs-btn-hover-bg: #0b666e;
+  --bs-btn-hover-border-color: #0b666e;
+  --bs-btn-active-bg: #0b666e;
+  --bs-btn-active-border-color: #0b666e;
+  --bs-btn-disabled-bg: var(--teal);
+  --bs-btn-disabled-border-color: var(--teal);
+}
+
+/* Estructura general */
+.app-layout { display: flex; min-height: 100vh; }
+.contenido { flex: 1; min-width: 0; padding: 2rem 2.5rem; }
+
+/* Menú lateral */
+.sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  background: var(--teal-profundo);
+  color: #fff;
+  padding: 1.5rem 1rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.sidebar-marca { display: flex; align-items: center; gap: 0.75rem; padding: 0 0.5rem 1.5rem; }
+.sidebar-marca strong { display: block; font-family: "Fraunces", Georgia, serif; font-size: 1.35rem; line-height: 1.1; }
+.sidebar-marca small { color: #b9d4d4; }
+.sidebar-logo {
+  width: 44px; height: 44px; flex-shrink: 0;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--rosa);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.4rem; font-weight: 700;
+}
+.sidebar-menu { display: flex; flex-direction: column; gap: 0.25rem; }
+.sidebar-enlace {
+  color: #d3e5e5; text-decoration: none;
+  padding: 0.65rem 0.9rem; border-radius: 8px;
+  border-left: 3px solid transparent;
+}
+.sidebar-enlace:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+.sidebar-enlace.active { background: rgba(255, 255, 255, 0.12); color: #fff; font-weight: 700; border-left-color: var(--rosa); }
+.sidebar-enlace:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* Páginas de administración */
+.pagina-encabezado { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
+.pagina-encabezado h1 { margin: 0; font-size: 2rem; }
+.buscador { max-width: 420px; }
+.panel { background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; padding: 0.5rem 1rem; }
+.tabla-datos thead th { color: var(--teal-profundo); border-bottom: 2px solid var(--teal); font-weight: 700; white-space: nowrap; }
+
+/* Inicio */
+.inicio-hero { max-width: 640px; margin-bottom: 2.5rem; }
+.inicio-hero h1 { font-size: 2.6rem; line-height: 1.1; }
+.inicio-hero p { font-size: 1.1rem; color: #4a5b5c; }
+.inicio-accesos { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; }
+.inicio-acceso {
+  display: block; padding: 1.5rem;
+  background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px;
+  color: inherit; text-decoration: none;
+  border-top: 4px solid var(--teal);
+}
+.inicio-acceso:nth-child(2) { border-top-color: var(--rosa); }
+.inicio-acceso:hover { box-shadow: 0 6px 18px rgba(15, 61, 62, 0.12); }
+.inicio-acceso:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.inicio-acceso h2 { font-size: 1.35rem; }
+.inicio-acceso p { margin: 0; color: #4a5b5c; }
+.pie { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--borde); color: #6b7b7c; font-size: 0.9rem; }
+
+/* Pantallas pequeñas: el menú pasa arriba */
+@media (max-width: 768px) {
+  .app-layout { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: static; padding: 1rem; }
+  .sidebar-marca { padding-bottom: 0.75rem; }
+  .sidebar-menu { flex-direction: row; flex-wrap: wrap; }
+  .contenido { padding: 1.25rem 1rem; }
+  .pagina-encabezado { flex-wrap: wrap; }
+}
