@@ -24,8 +24,9 @@ export default function InicioPage() {
       <header className="inicio-hero">
         <h1>Bienvenida a {NEGOCIO.nombre}</h1>
         <p>
-          Aquí administras la comercializadora y la peluquería: lo que vendes, a
-          quién se lo compras y quién te compra.
+          Aquí administras el inventario... Aquí administras la comercializadora
+          y la peluquería: lo que vendes, a quién se lo compras y quién te
+          compra.
         </p>
       </header>
 
