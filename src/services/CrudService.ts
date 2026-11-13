@@ -45,14 +45,22 @@ export class CrudService<
       return { items, totalPaginas: 1 };
     }
     const datos = await this.cliente.peticion<
-      { content?: TEntidad[]; totalPages?: number } | TEntidad[] | null
+      //{ content?: TEntidad[]; totalPages?: number } | TEntidad[] | null
+      | {
+          content?: TEntidad[];
+          totalPages?: number;
+          page?: { totalPages?: number };
+        }
+      | TEntidad[]
+      | null
     >(`${this.ruta}?page=${pagina}`);
     if (Array.isArray(datos)) {
       return { items: datos.map((r) => this.transformar(r)), totalPaginas: 1 };
     }
     return {
       items: (datos?.content ?? []).map((r) => this.transformar(r)),
-      totalPaginas: datos?.totalPages ?? 1,
+      //totalPaginas: datos?.totalPages ?? 1,
+      totalPaginas: datos?.page?.totalPages ?? datos?.totalPages ?? 1,
     };
   }
 
