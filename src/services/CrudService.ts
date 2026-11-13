@@ -7,7 +7,10 @@ import { apiClient, type ApiClient } from "./ApiClient";
 //   TEntidad = lo que devuelve el backend (Producto, Cliente...)
 //   TForm    = lo que se envía al crear o actualizar
 // Las clases hijas (ProductoService, etc.) la heredan con "extends".
-export class CrudService<TEntidad extends Entidad, TForm extends DatosFormulario> {
+export class CrudService<
+  TEntidad extends Entidad,
+  TForm extends DatosFormulario,
+> {
   private readonly ruta: string;
   private readonly cliente: ApiClient;
 
@@ -25,9 +28,32 @@ export class CrudService<TEntidad extends Entidad, TForm extends DatosFormulario
     const url = termino
       ? `${this.ruta}/search?name=${encodeURIComponent(termino)}`
       : this.ruta;
-    const datos = await this.cliente.peticion<RespuestaLista<TEntidad> | null>(url);
-    const lista = Array.isArray(datos) ? datos : datos?.content ?? [];
+    const datos = await this.cliente.peticion<RespuestaLista<TEntidad> | null>(
+      url,
+    );
+    const lista = Array.isArray(datos) ? datos : (datos?.content ?? []);
     return lista.map((registro) => this.transformar(registro));
+  }
+
+  // Lista por páginas (de 10 en 10). Con búsqueda no se pagina.
+  async listarPagina(
+    termino: string = "",
+    pagina: number = 0,
+  ): Promise<{ items: TEntidad[]; totalPaginas: number }> {
+    if (termino) {
+      const items = await this.listar(termino);
+      return { items, totalPaginas: 1 };
+    }
+    const datos = await this.cliente.peticion<
+      { content?: TEntidad[]; totalPages?: number } | TEntidad[] | null
+    >(`${this.ruta}?page=${pagina}`);
+    if (Array.isArray(datos)) {
+      return { items: datos.map((r) => this.transformar(r)), totalPaginas: 1 };
+    }
+    return {
+      items: (datos?.content ?? []).map((r) => this.transformar(r)),
+      totalPaginas: datos?.totalPages ?? 1,
+    };
   }
 
   crear(datos: TForm): Promise<TEntidad> {
@@ -46,6 +72,8 @@ export class CrudService<TEntidad extends Entidad, TForm extends DatosFormulario
   }
 
   eliminar(id: number): Promise<void> {
-    return this.cliente.peticion<void>(`${this.ruta}/${id}`, { method: "DELETE" });
+    return this.cliente.peticion<void>(`${this.ruta}/${id}`, {
+      method: "DELETE",
+    });
   }
 }

@@ -1,14 +1,23 @@
 import { useMemo, useState } from "react";
-import { Alert, Button } from "react-bootstrap";
+//import { Alert, Button } from "react-bootstrap";
 import useCrud from "../hooks/useCrud";
 import type { CrudService } from "../services/CrudService";
-import type { CampoFormulario, Columna, DatosFormulario, ValoresFormulario } from "../types/formulario";
+import type {
+  CampoFormulario,
+  Columna,
+  DatosFormulario,
+  ValoresFormulario,
+} from "../types/formulario";
 import type { Entidad } from "../types/modelos";
 import Buscador from "./Buscador";
 import ModalFormulario from "./ModalFormulario";
 import TablaDatos from "./TablaDatos";
+import { Alert, Button, Pagination } from "react-bootstrap";
 
-interface PaginaCrudProps<TEntidad extends Entidad, TForm extends DatosFormulario> {
+interface PaginaCrudProps<
+  TEntidad extends Entidad,
+  TForm extends DatosFormulario,
+> {
   titulo: string;
   singular: string;
   servicio: CrudService<TEntidad, TForm>;
@@ -19,7 +28,10 @@ interface PaginaCrudProps<TEntidad extends Entidad, TForm extends DatosFormulari
 
 // Pantalla completa de administración (buscar, listar, crear, actualizar, eliminar).
 // Productos, proveedores y clientes la reutilizan: solo cambian los datos que reciben.
-export default function PaginaCrud<TEntidad extends Entidad, TForm extends DatosFormulario>({
+export default function PaginaCrud<
+  TEntidad extends Entidad,
+  TForm extends DatosFormulario,
+>({
   titulo,
   singular,
   servicio,
@@ -27,7 +39,19 @@ export default function PaginaCrud<TEntidad extends Entidad, TForm extends Datos
   campos,
   placeholderBusqueda,
 }: PaginaCrudProps<TEntidad, TForm>) {
-  const { items, termino, setTermino, cargando, error, guardar, eliminar } = useCrud(servicio);
+  //const { items, termino, setTermino, cargando, error, guardar, eliminar } = useCrud(servicio);
+  const {
+    items,
+    termino,
+    setTermino,
+    pagina,
+    totalPaginas,
+    setPagina,
+    cargando,
+    error,
+    guardar,
+    eliminar,
+  } = useCrud(servicio);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [editando, setEditando] = useState<TEntidad | null>(null); // null = creando uno nuevo
   const [aviso, setAviso] = useState<string>("");
@@ -53,11 +77,14 @@ export default function PaginaCrud<TEntidad extends Entidad, TForm extends Datos
   }
 
   async function pedirEliminar(fila: TEntidad): Promise<void> {
-    if (!window.confirm(`¿Seguro que quieres eliminar este ${singular}?`)) return;
+    if (!window.confirm(`¿Seguro que quieres eliminar este ${singular}?`))
+      return;
     try {
       await eliminar(fila.id);
     } catch {
-      setAviso(`No se pudo eliminar el ${singular}. Puede estar asociado a otros registros.`);
+      setAviso(
+        `No se pudo eliminar el ${singular}. Puede estar asociado a otros registros.`,
+      );
     }
   }
 
@@ -68,11 +95,24 @@ export default function PaginaCrud<TEntidad extends Entidad, TForm extends Datos
         <Button onClick={abrirCrear}>Crear {singular}</Button>
       </header>
 
-      <Buscador valor={termino} onCambio={setTermino} placeholder={placeholderBusqueda} />
+      <Buscador
+        valor={termino}
+        onCambio={setTermino}
+        placeholder={placeholderBusqueda}
+      />
 
-      {error && <Alert variant="warning" className="mt-3">{error}</Alert>}
+      {error && (
+        <Alert variant="warning" className="mt-3">
+          {error}
+        </Alert>
+      )}
       {aviso && (
-        <Alert variant="danger" dismissible onClose={() => setAviso("")} className="mt-3">
+        <Alert
+          variant="danger"
+          dismissible
+          onClose={() => setAviso("")}
+          className="mt-3"
+        >
           {aviso}
         </Alert>
       )}
@@ -86,6 +126,30 @@ export default function PaginaCrud<TEntidad extends Entidad, TForm extends Datos
           onEliminar={pedirEliminar}
         />
       </div>
+
+      {totalPaginas > 1 && (
+        <div className="d-flex justify-content-center mt-3">
+          <Pagination>
+            <Pagination.Prev
+              disabled={pagina === 0}
+              onClick={() => setPagina(pagina - 1)}
+            />
+            {Array.from({ length: totalPaginas }, (_, i) => (
+              <Pagination.Item
+                key={i}
+                active={i === pagina}
+                onClick={() => setPagina(i)}
+              >
+                {i + 1}
+              </Pagination.Item>
+            ))}
+            <Pagination.Next
+              disabled={pagina >= totalPaginas - 1}
+              onClick={() => setPagina(pagina + 1)}
+            />
+          </Pagination>
+        </div>
+      )}
 
       <ModalFormulario
         visible={modalVisible}
